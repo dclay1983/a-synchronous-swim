@@ -3,7 +3,24 @@
   const serverUrl = 'http://127.0.0.1:3000';
 
   //
-  // TODO: build the swim command fetcher here
+  (ajaxGet = (req, repeat=false) => {
+    ct = req === 'background.jpg' ? 'image/jpeg' : 'text/plain'
+    $.ajax({
+      type: 'GET',
+      data: req,
+      url: serverUrl,
+      contentType: ct,
+      success: (data) => {
+        if(req === 'direction') {
+          SwimTeam.move(data.toLowerCase());
+          window.remote = setTimeout(ajaxGet, 10, 'direction', true);
+        } else if (req === 'background.jpg') {
+
+          $('.pool').css('background-image', 'url(http://127.0.0.1:3000/?background.jpg)');
+        }
+      }
+    });
+  });
   //
 
   /////////////////////////////////////////////////////////////////////

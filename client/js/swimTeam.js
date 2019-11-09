@@ -1,4 +1,5 @@
 const SwimTeam = {
+  isWaiting: false,
 
   // direction, start and max all need to match the CSS
   direction: 'left',
@@ -34,10 +35,13 @@ const SwimTeam = {
     if (!direction) {
       return false;
     }
-    if (['left', 'right', 'up', 'down'].indexOf(direction) < 0 ) {
+    if (direction === 'wait') {
+      return false;
+    } else if (['left', 'right', 'up', 'down'].indexOf(direction) < 0 ) {
       console.log(`Ignoring command: ${direction}`);
       return false;
     }
+    this.isWaiting = false;
     return true;
   },
 
@@ -65,7 +69,7 @@ const SwimTeam = {
         SwimTeam.coords.left += 5;
       }
       break;
-    } 
+    }
   }
 
 };
