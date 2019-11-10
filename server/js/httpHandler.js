@@ -31,14 +31,15 @@ module.exports.router = (req, res, next = ()=>{}) => {
     } else if (reqUrl === 'background.jpg') {
       let file = exports.backgroundImageFile;
       let stream = fs.createReadStream(file);
-      console.log(stream);
       stream.on('open', function () {
         // res.setHeader('content-type', 'image/jpeg');
-        res.writeHead(200, headers);
         stream.pipe(res);
+      });
+      stream.on('end', function () {
+        res.writeHead(200, headers);
         res.end()
         next();
-      });
+      })
       stream.on('error', function () {
         res.writeHead(404, headers);
         res.end();
@@ -51,6 +52,28 @@ module.exports.router = (req, res, next = ()=>{}) => {
     res.writeHead(200, headers);
     res.end();
     next()
+  } else if (req.method === 'POST') {
+    let chunks = [];
+    req.on('data', (chunk) => {
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      chunks = Buffer.concat(chunks);
+      fs.writeFile(module.exports.backgroundImageFile, chunks, (err) => {
+        if(err) {
+          res.writeHead(500, headers);
+          res.end();
+          next();
+        } else {
+          res.writeHead(201, headers);
+          res.end();
+          next();
+        }
+      });
+    });
+  }else {
+    res.writeHead(404, headers);
+    res.end();
+    next();
   }
-
 };

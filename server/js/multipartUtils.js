@@ -21,4 +21,3 @@ module.exports.getFile = function(buffer) {
   }
   return null;
 };
-
